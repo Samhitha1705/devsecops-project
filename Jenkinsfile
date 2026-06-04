@@ -17,13 +17,7 @@ pipeline {
             }
         }
 
-        stage('Build & Test') {
-            steps {
-                sh 'mvn clean test'
-            }
-        }
-
-        stage('SonarQube Analysis') {
+        stage('Build, Test & Sonar Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh """
