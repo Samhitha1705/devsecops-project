@@ -5,6 +5,10 @@ pipeline {
         maven 'Maven3'
     }
 
+    environment {
+        SONAR_SERVER = 'sonar'
+    }
+
     stages {
 
         stage('Checkout Code') {
@@ -13,19 +17,30 @@ pipeline {
             }
         }
 
-        stage('Build, Test & Sonar Analysis') {
+        stage('Build + Test') {
             steps {
-                withSonarQubeEnv('sonar') {
-                    sh """
-                    mvn clean verify sonar:sonar
-                    """
+                sh 'mvn clean verify'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONAR_SERVER}") {
+                    sh '''
+                        mvn sonar:sonar \
+                        -Dsonar.qualitygate.wait=false
+                    '''
                 }
             }
         }
 
-        stage('Quality Gate') {
+        stage('Quality Gate Check') {
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
+
+                
+
+                timeout(time: 15, unit: 'MINUTES') {
+
                     waitForQualityGate abortPipeline: true
                 }
             }
@@ -40,6 +55,9 @@ pipeline {
         failure {
             echo "Pipeline FAILED ❌"
         }
+
+        always {
+            echo "Pipeline finished."
+        }
     }
 }
-
