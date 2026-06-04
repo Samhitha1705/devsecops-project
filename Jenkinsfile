@@ -26,21 +26,14 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONAR_SERVER}") {
-                    sh '''
-                        mvn sonar:sonar \
-                        -Dsonar.qualitygate.wait=false
-                    '''
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
 
         stage('Quality Gate Check') {
             steps {
-
-                
-
                 timeout(time: 15, unit: 'MINUTES') {
-
                     waitForQualityGate abortPipeline: true
                 }
             }
@@ -54,6 +47,10 @@ pipeline {
 
         failure {
             echo "Pipeline FAILED ❌"
+        }
+
+        aborted {
+            echo "Pipeline ABORTED ⚠"
         }
 
         always {
