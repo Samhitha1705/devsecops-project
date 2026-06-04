@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonar-token')   // Jenkins stored secret
+        SONAR_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -25,11 +25,13 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                sh """
-                mvn sonar:sonar \
-                -Dsonar.host.url=http://localhost:9000 \
-                -Dsonar.login=$SONAR_TOKEN
-                """
+                withSonarQubeEnv('sonar') {
+                    sh """
+                    mvn clean verify sonar:sonar \
+                    -Dsonar.host.url=http://localhost:9000 \
+                    -Dsonar.login=$SONAR_TOKEN
+                    """
+                }
             }
         }
 
