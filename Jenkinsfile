@@ -5,10 +5,6 @@ pipeline {
         maven 'Maven3'
     }
 
-    environment {
-        SONAR_TOKEN = credentials('sonar-token')
-    }
-
     stages {
 
         stage('Checkout Code') {
@@ -21,9 +17,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh """
-                    mvn clean verify sonar:sonar \
-                    -Dsonar.host.url=http://localhost:9000 \
-                    -Dsonar.login=$SONAR_TOKEN
+                    mvn clean verify sonar:sonar
                     """
                 }
             }
@@ -48,3 +42,4 @@ pipeline {
         }
     }
 }
+
