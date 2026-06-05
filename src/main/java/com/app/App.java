@@ -1,18 +1,24 @@
 package com.app;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.*;
+
+@SpringBootApplication
+@RestController
 public class App {
 
-    public int add(int a, int b) {
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+
+    @GetMapping("/add")
+    public int add(@RequestParam int a, @RequestParam int b) {
         return a + b;
     }
 
-    public int multiply(int a, int b) {
+    @GetMapping("/multiply")
+    public int multiply(@RequestParam int a, @RequestParam int b) {
         return a * b;
-    }
-
-    public static void main(String[] args) {
-        App app = new App();
-        System.out.println("Addition: " + app.add(2, 3));
-        System.out.println("Multiplication: " + app.multiply(2, 3));
     }
 }
